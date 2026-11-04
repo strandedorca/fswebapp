@@ -32,7 +32,7 @@ export function HomePage() {
   return (
     <div className="pb-8 pt-6 sm:pt-10">
       <p className="mx-auto mb-6 w-fit rounded-full border border-mint/30 bg-mint/10 px-3 py-1 text-center text-[11px] font-medium tracking-wide text-mint">
-        SENT ONLY TO YOUR API · SHOWN AS TEXT · NOT OPENED AS A LINK
+        OFFLINE ANALYSIS · NO REQUEST SENT · NO DATA TRACKING
       </p>
       <h1 className="text-center text-4xl font-semibold tracking-tight sm:text-5xl">Is this URL safe?</h1>
       <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-6 text-mist sm:text-base">

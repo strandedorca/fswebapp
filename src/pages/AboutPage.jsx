@@ -4,22 +4,22 @@ const STEPS = [
   {
     n: '01',
     title: 'Paste a URL',
-    body: 'Enter a full web address. An empty or invalid address is rejected beside the field, before anything is sent. Include the path and query when you have them.',
+    body: 'Enter any full web address. An empty or invalid address is rejected with a clear error. The full URL including query parameters gives the best results.',
   },
   {
     n: '02',
     title: 'Read the structure',
-    body: 'The page splits the address into protocol, host, path, and query, and lists signals such as an IP host, a look-alike name, or a missing lock. It does not open the link.',
+    body: 'We parse the string into host, path, TLD, and compute signals such as length, IP-as-host, look-alikes, and unusual TLDs without fetching the page.',
   },
   {
     n: '03',
     title: 'Classify and score',
-    body: 'Your API runs the model once per check. The likelihood is mapped to a 0–100 trust score and a low, medium, or high band.',
+    body: 'An ML model estimates phishing likelihood. That result is mapped to a 0–100 trust score and a color-coded Low / Medium / High trust band..',
   },
   {
     n: '04',
     title: 'Explain the result',
-    body: 'The score stays the largest thing on the result page. Suspicious parts are highlighted and each one has a plain-language reason.',
+    body: 'The score stays the largest thing on the result page. Suspicious URL parts are highlighted and listed with plain-language reasons so you can see why the score moved.',
   },
 ]
 
@@ -38,12 +38,11 @@ export function AboutPage() {
     <div className="mx-auto max-w-3xl pt-4">
       <p className="text-xs font-medium tracking-[0.16em] text-mint">ABOUT PHISHGUARD</p>
       <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-        A security tool that respects what it shows you.
+        A security tool that respects your privacy.
       </h1>
       <p className="mt-4 text-sm leading-7 text-mist sm:text-base">
-        PhishGuard checks whether a web address looks like phishing. The page sends that address only to your own
-        API, shows it back as text, and never turns it into HTML or a link. A front-end check can tell you the
-        address is empty or the wrong kind of URL. The API is what enforces the limit.
+        PhishGuard is an open-source, browser-based phishing URL detector. Every analysis runs entirely in your browser.
+        We do not see your URLs, your IP address, or collect any personal data.
       </p>
 
       <h2 className="mb-3 mt-10 text-xs font-medium tracking-[0.16em] text-mist">HOW PHISHGUARD WORKS</h2>
@@ -74,7 +73,7 @@ export function AboutPage() {
 
       <p className="mt-10 text-sm leading-6 text-mist">
         Built with React for the COS30049 phishing URL detector. The model runs in FastAPI, which this front end
-        calls at <span className="font-mono text-slate-200">/api/check</span>.
+        calls at <span className="font-mono text-slate-200">/api/predict</span>.
       </p>
     </div>
   )

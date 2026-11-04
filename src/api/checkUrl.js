@@ -7,8 +7,14 @@ export class CheckError extends Error {
 }
 
 /**
- * Sends the address to the local API as JSON.
+ * Sends the address to the FastAPI predict endpoint.
  * The response is read as data and later shown as text, never as HTML.
+ *
+ * Expected success body:
+ * { url, verdict: "phishing"|"legitimate", phishing_probability, confidence }
+ *
+ * Expected error body:
+ * { error, detail } - detail is shown to the user.
  */
 export async function checkUrl(url) {
   const base = import.meta.env.VITE_API_BASE ?? ''
@@ -16,7 +22,7 @@ export async function checkUrl(url) {
   const timer = setTimeout(() => controller.abort(), 20000)
 
   try {
-    const response = await fetch(`${base}/api/check`, {
+    const response = await fetch(`${base}/api/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,12 +34,7 @@ export async function checkUrl(url) {
 
     const body = await readJson(response)
     if (!response.ok) {
-      const message = messageFrom(body)
-      if (message) throw new CheckError(message, response.status)
-      if (response.status >= 500) {
-        throw new CheckError('The PhishGuard API could not be reached.', response.status)
-      }
-      throw new CheckError('The server rejected this check.', response.status)
+      throw new CheckError(messageFrom(body, response.status), response.status)
     }
     return normalise(body)
   } catch (error) {
@@ -47,6 +48,21 @@ export async function checkUrl(url) {
   }
 }
 
+export async function checkHealth() {
+  const base = import.meta.env.VITE_API_BASE ?? ''
+  try {
+    const response = await fetch(`${base}/api/health`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    })
+    if (!response.ok) return false
+    const body = await readJson(response)
+    return body?.status === 'ok'
+  } catch {
+    return false
+  }
+}
+
 async function readJson(response) {
   try {
     return await response.json()
@@ -55,12 +71,16 @@ async function readJson(response) {
   }
 }
 
-function messageFrom(body) {
-  if (!body || typeof body !== 'object') return null
-  const raw = body.message ?? body.detail
-  if (typeof raw !== 'string') return null
-  const text = raw.replace(/\s+/g, ' ').trim()
-  return text ? text.slice(0, 300) : null
+function messageFrom(body, status) {
+  if (body && typeof body === 'object') {
+    const raw = body.detail ?? body.error
+    if (typeof raw === 'string') {
+      const text = raw.replace(/\s+/g, ' ').trim()
+      if (text) return text.slice(0, 300)
+    }
+  }
+  if (status >= 500) return 'The PhishGuard API could not be reached.'
+  return 'The server rejected this check.'
 }
 
 function normalise(body) {
@@ -68,28 +88,27 @@ function normalise(body) {
     throw new CheckError('The server returned an unexpected response.', 502)
   }
 
-  const probability = asUnit(body.phishing_probability ?? body.confidence)
+  const phishingProbability = asUnit(body.phishing_probability)
+  const confidence = asUnit(body.confidence)
   let verdict = body.verdict
-  if (verdict !== 'phishing' && verdict !== 'legitimate' && probability != null) {
-    verdict = probability >= 0.5 ? 'phishing' : 'legitimate'
+
+  if (verdict !== 'phishing' && verdict !== 'legitimate') {
+    if (phishingProbability == null) {
+      throw new CheckError('The server returned an unexpected response.', 502)
+    }
+    verdict = phishingProbability >= 0.5 ? 'phishing' : 'legitimate'
   }
 
-  let trust = asScore(body.trust_score)
-  if (trust == null && probability != null) {
-    trust = Math.round((1 - probability) * 100)
-  }
-
-  if (trust == null || (verdict !== 'phishing' && verdict !== 'legitimate')) {
+  if (phishingProbability == null) {
     throw new CheckError('The server returned an unexpected response.', 502)
   }
 
-  const confidence =
-    probability == null ? null : verdict === 'phishing' ? probability : 1 - probability
-
   return {
-    trustScore: trust,
+    url: typeof body.url === 'string' ? body.url : null,
+    trustScore: Math.round((1 - phishingProbability) * 100),
     verdict,
     confidence,
+    phishingProbability,
   }
 }
 
@@ -97,10 +116,4 @@ function asUnit(value) {
   const number = Number(value)
   if (!Number.isFinite(number) || number < 0 || number > 1) return null
   return number
-}
-
-function asScore(value) {
-  const number = Number(value)
-  if (!Number.isFinite(number)) return null
-  return Math.max(0, Math.min(100, Math.round(number)))
 }
