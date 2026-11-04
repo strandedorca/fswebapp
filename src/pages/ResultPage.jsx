@@ -68,7 +68,7 @@ export function ResultPage() {
   }
 
   return (
-    <div>
+    <div className="pt-4">
       <Link to="/" className="text-xs font-medium tracking-[0.14em] text-mist hover:text-white">
         ← ANALYSE ANOTHER URL
       </Link>

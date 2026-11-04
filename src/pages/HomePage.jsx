@@ -3,8 +3,8 @@ import { UrlForm } from '../components/UrlForm.jsx'
 
 const POINTS = [
   {
-    title: 'Sent to your API',
-    body: 'The address is posted only to the PhishGuard server you run. It is not opened as a link.',
+    title: 'Sent to loca API',
+    body: 'The address is posted only to the PhishGuard API server. It is not opened as a link.',
     icon: 'lock',
   },
   {
@@ -31,12 +31,12 @@ export function HomePage() {
 
   return (
     <div className="pb-8 pt-6 sm:pt-10">
-      <p className="mx-auto mb-6 w-fit rounded-full border border-mint/30 bg-mint/10 px-3 py-1 text-center text-[11px] font-medium tracking-wide text-mint">
-        OFFLINE ANALYSIS · NO REQUEST SENT · NO DATA TRACKING
+      <p className="mx-auto mb-6 w-fit rounded-full border border-mint/30 bg-mint/10 px-5 py-1.5 text-center text-[11px] font-medium tracking-wide text-mint whitespace-pre">
+        LOCAL API ONLY    •    PAGE NEVER FETCHED    •    NO DATA TRACKING
       </p>
       <h1 className="text-center text-4xl font-semibold tracking-tight sm:text-5xl">Is this URL safe?</h1>
       <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-6 text-mist sm:text-base">
-        Paste a web address below. PhishGuard reads its structure for phishing signals and asks your model for a score.
+        Paste a web address below. PhishGuard analyzes its structure for phishing indicators without ever fetching the page.
       </p>
       <div className="mt-8">
         <UrlForm />
@@ -44,9 +44,11 @@ export function HomePage() {
       <ul className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {POINTS.map((point) => (
           <li key={point.title} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-4">
-            <Icon name={point.icon} />
-            <h2 className="mt-3 text-sm font-medium">{point.title}</h2>
-            <p className="mt-1 text-xs leading-5 text-mist">{point.body}</p>
+            <div className="flex flex-col items-center justify-center">
+              <Icon name={point.icon} />  
+              <h2 className="mt-3 text-sm font-medium">{point.title}</h2>
+              <p className="mt-1 text-xs leading-5 text-mist text-center">{point.body}</p>
+            </div>
           </li>
         ))}
       </ul>

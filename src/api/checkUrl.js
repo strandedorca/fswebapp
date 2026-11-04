@@ -7,14 +7,8 @@ export class CheckError extends Error {
 }
 
 /**
- * Sends the address to the FastAPI predict endpoint.
+ * checkUrl: sends the address to the FastAPI predict endpoint.
  * The response is read as data and later shown as text, never as HTML.
- *
- * Expected success body:
- * { url, verdict: "phishing"|"legitimate", phishing_probability, confidence }
- *
- * Expected error body:
- * { error, detail } - detail is shown to the user.
  */
 export async function checkUrl(url) {
   const base = import.meta.env.VITE_API_BASE ?? ''

@@ -11,7 +11,7 @@ export function SessionChart({ checks, activeId, onSelect }) {
   }))
 
   return (
-    <section className="mt-10" aria-labelledby="session-title">
+    <section className="mt-10 border-t border-white/15 pt-10" aria-labelledby="session-title">
       <h2 id="session-title" className="text-lg font-semibold">
         Checks this session
       </h2>

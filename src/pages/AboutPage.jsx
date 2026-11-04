@@ -24,10 +24,16 @@ const STEPS = [
 ]
 
 const TEAM = [
-  { initials: 'AC', name: 'Averyth Cheng', role: 'Project manager' },
-  { initials: 'KC', name: 'KanhchanacLeak Cheng', role: 'ML engineer' },
-  { initials: 'ND', name: 'Noah Dang', role: 'Full-stack developer' },
+  { initials: 'AC', name: 'Averyth Cheng', role: 'Project Manager', accent: 'mint' },
+  { initials: 'KC', name: 'KanhchanacLeak Cheng', role: 'ML Engineer', accent: 'lilac' },
+  { initials: 'ND', name: 'Noah Dang', role: 'Full-stack Developer', accent: 'warn' },
 ]
+
+const ACCENT = {
+  mint: { avatar: 'border border-mint bg-mint/15 text-mint', role: 'text-mint' },
+  lilac: { avatar: 'border border-lilac bg-lilac/15 text-lilac', role: 'text-lilac' },
+  warn: { avatar: 'border border-warn bg-warn/15 text-warn', role: 'text-warn' },
+}
 
 export function AboutPage() {
   useEffect(() => {
@@ -45,35 +51,40 @@ export function AboutPage() {
         We do not see your URLs, your IP address, or collect any personal data.
       </p>
 
-      <h2 className="mb-3 mt-10 text-xs font-medium tracking-[0.16em] text-mist">HOW PHISHGUARD WORKS</h2>
+      <h2 className="mb-6 mt-10 text-xs font-medium tracking-[0.16em] text-mist">HOW PHISHGUARD WORKS</h2>
       <ol className="space-y-3">
         {STEPS.map((step) => (
-          <li key={step.n} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-4">
-            <h3 className="font-medium">
-              <span className="mr-2 text-mint">{step.n}</span>
-              {step.title}
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-mist">{step.body}</p>
+          <li key={step.n} className="grid grid-cols-[auto_1fr] gap-x-4 rounded-2xl border border-white/10 bg-ink-900 px-4 py-5">
+            <span className="font-mono text-mint font-bold text-xl">{step.n}</span>
+            <div>
+              <h3 className="font-semibold">{step.title}</h3>
+              <p className="mt-1 text-sm leading-6 text-mist">{step.body}</p>
+            </div>
           </li>
         ))}
       </ol>
 
       <h2 className="mb-3 mt-10 text-xs font-medium tracking-[0.16em] text-mist">THE TEAM</h2>
       <ul className="grid gap-3 sm:grid-cols-3">
-        {TEAM.map((person) => (
-          <li key={person.initials} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-4">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-mint/15 text-sm font-semibold text-mint">
-              {person.initials}
-            </span>
-            <h3 className="mt-3 font-medium">{person.name}</h3>
-            <p className="text-sm text-mist">{person.role}</p>
-          </li>
-        ))}
+        {TEAM.map((person) => {
+          const accent = ACCENT[person.accent]
+          return (
+            <li key={person.initials} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-4">
+              <span
+                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${accent.avatar}`}
+              >
+                {person.initials}
+              </span>
+              <h3 className="mt-3 font-semibold">{person.name}</h3>
+              <p className={`text-sm ${accent.role} font-medium`}>{person.role}</p>
+            </li>
+          )
+        })}
       </ul>
 
-      <p className="mt-10 text-sm leading-6 text-mist">
-        Built with React for the COS30049 phishing URL detector. The model runs in FastAPI, which this front end
-        calls at <span className="font-mono text-slate-200">/api/predict</span>.
+      <p className="border-t border-white/15 pt-8 mt-10 text-sm leading-6 text-mist/60">
+        PhishGuard is open-source. Built with React, and Tailwind CSS. The model runs in FastAPI, which this front end
+        calls at <span className="font-mono text-slate-200 text-mist/60">/api/predict</span>.
       </p>
     </div>
   )

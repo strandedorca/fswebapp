@@ -47,6 +47,18 @@ export function validateUrl(input) {
     return { ok: false, message: 'That address has no host name.' }
   }
 
+  // Match the backend URL_pattern: IPv4 host, or a domain with a letters-only TLD.
+  // Rejects values the form would accept but /api/predict would reject (e.g. localhost).
+  const host = url.hostname
+  const isIpv4 = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) && host.split('.').every((part) => Number(part) <= 255)
+  const isDomain = /^[\w.-]+\.[a-zA-Z]{2,}$/.test(host)
+  if (!isIpv4 && !isDomain) {
+    return {
+      ok: false,
+      message: 'Enter a full well-formed URL, for example https://example.com.',
+    }
+  }
+
   return { ok: true, url: url.href, message: '' }
 }
 

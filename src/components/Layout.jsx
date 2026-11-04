@@ -19,46 +19,51 @@ export function Layout() {
       >
         Skip to content
       </a>
-      <header className="relative mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-5 sm:px-6">
-        <NavLink to="/" className="flex items-center gap-2 text-mint" onClick={() => setOpen(false)}>
-          <Logo />
-          <span className="text-xs font-semibold tracking-[0.22em]">PHISHGUARD</span>
-        </NavLink>
-        <button
-          type="button"
-          className="rounded-md border border-white/10 px-3 py-2 text-sm text-mist sm:hidden"
-          aria-expanded={open}
-          aria-controls="site-nav"
-          onClick={() => setOpen((value) => !value)}
-        >
-          Menu
-        </button>
-        <nav id="site-nav" className={`${open ? 'block' : 'hidden'} absolute left-4 right-4 top-16 rounded-xl border border-white/10 bg-ink-900 p-2 sm:static sm:block sm:border-0 sm:bg-transparent sm:p-0`}>
-          <ul className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-1">
-            {LINKS.map((link) => (
-              <li key={link.to}>
-                <NavLink
-                  to={link.to}
-                  end={link.end}
-                  onClick={() => setOpen(false)}
-                  className={({ isActive }) =>
-                    `block rounded-md px-3 py-2 text-sm ${
-                      isActive ? 'bg-mint/15 text-mint' : 'text-mist hover:text-white'
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      <header className="relative border-b border-white/15">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+          <NavLink to="/" className="flex items-center gap-2 text-mint" onClick={() => setOpen(false)}>
+            <Logo />
+            <span className="text-xs font-semibold tracking-[0.22em]">PHISHGUARD</span>
+          </NavLink>
+          <button
+            type="button"
+            className="rounded-md border border-white/10 px-3 py-2 text-sm text-mist sm:hidden"
+            aria-expanded={open}
+            aria-controls="site-nav"
+            onClick={() => setOpen((value) => !value)}
+          >
+            Menu
+          </button>
+          <nav
+            id="site-nav"
+            className={`${open ? 'block' : 'hidden'} absolute left-4 right-4 top-16 rounded-xl border border-white/10 bg-ink-900 p-2 sm:static sm:block sm:border-0 sm:bg-transparent sm:p-0`}
+          >
+            <ul className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-1">
+              {LINKS.map((link) => (
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    end={link.end}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) =>
+                      `block rounded-md px-3 py-2 text-sm ${
+                        isActive ? 'bg-mint/15 text-mint' : 'text-mist hover:text-white'
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </header>
       <main id="main" className="mx-auto w-full max-w-5xl px-4 pb-16 sm:px-6">
         <Outlet />
       </main>
-      <footer className="border-t border-white/5 px-4 py-6 text-center text-xs text-mist/80">
-        PhishGuard · COS30049 Phishing URL Detection prototype · Session 15 Group 7
+      <footer className="whitespace-pre border-t border-white/15 px-4 py-6 text-center text-xs text-mist/70">
+        PhishGuard    •    COS30049 Phishing URL Detection prototype    •    Session 15 Group 7
       </footer>
     </div>
   )

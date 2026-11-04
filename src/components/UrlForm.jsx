@@ -27,10 +27,12 @@ export function UrlForm() {
         <label htmlFor={inputId} className="sr-only">
           Web address to check
         </label>
-        <input
+        <textarea
           id={inputId}
           name="url"
           value={value}
+          rows={3}
+          wrap="soft"
           maxLength={MAX_URL_LENGTH}
           autoComplete="off"
           spellCheck="false"
@@ -38,16 +40,23 @@ export function UrlForm() {
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? errorId : undefined}
           onChange={(event) => {
-            setValue(event.target.value)
+            // Soft wrap is visual only; strip real line breaks so the address stays one URL.
+            setValue(event.target.value.replace(/[\r\n]+/g, ''))
             if (error) setError('')
           }}
-          className="w-full bg-transparent px-5 py-5 font-mono text-sm text-slate-100 placeholder:text-mist/70"
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              event.currentTarget.form?.requestSubmit()
+            }
+          }}
+          className="w-full resize-none bg-transparent px-5 py-4 font-mono text-sm leading-6 text-slate-100 placeholder:text-mist/70"
         />
         <div className="flex items-center justify-between gap-3 border-t border-white/5 px-5 py-3">
-          <p className="text-xs text-mist">Press Enter or click Analyse</p>
+          <p className="text-sm text-mist">Press Enter or click Analyse</p>
           <button
             type="submit"
-            className="rounded-full bg-lilac px-4 py-2 text-sm font-medium text-white hover:bg-lilac/90"
+            className="rounded-lg bg-lilac px-4 py-2 text-sm font-medium text-ink-950 hover:bg-lilac/90"
           >
             Analyse →
           </button>
@@ -59,7 +68,7 @@ export function UrlForm() {
         </p>
       ) : null}
 
-      <p className="mb-2 mt-8 text-xs font-medium tracking-[0.16em] text-mist">TRY AN EXAMPLE</p>
+      <p className="mb-5 mt-8 text-xs font-semibold tracking-[0.16em] text-mist">TRY AN EXAMPLE:</p>
       <ul className="space-y-2">
         {EXAMPLES.map((example) => (
           <li key={example}>
