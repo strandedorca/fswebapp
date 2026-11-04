@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #070b12;
+  color: #eef3f8;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+:focus-visible {
+  outline: 2px solid #8d7cf8;
+  outline-offset: 2px;
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: #a8b3c4;
+}
