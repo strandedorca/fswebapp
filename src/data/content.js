@@ -1,3 +1,6 @@
+/**
+ * DATASET: MOCK summary of the dataset.
+ */
 export const DATASET = {
   total: 10000,
   phishing: 5000,

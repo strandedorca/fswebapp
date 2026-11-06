@@ -42,6 +42,37 @@ export async function checkUrl(url) {
   }
 }
 
+/**
+ * fetchDatasetInfo: training-set summary for the Dataset page.
+ * Shape matches GET /api/dataset-info.
+ */
+export async function fetchDatasetInfo() {
+  const base = import.meta.env.VITE_API_BASE ?? ''
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 20000)
+
+  try {
+    const response = await fetch(`${base}/api/dataset-info`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    })
+    const body = await readJson(response)
+    if (!response.ok) {
+      throw new CheckError(messageFrom(body, response.status), response.status)
+    }
+    return normaliseDataset(body)
+  } catch (error) {
+    if (error instanceof CheckError) throw error
+    if (error.name === 'AbortError') {
+      throw new CheckError('The dataset summary took too long and was stopped.', 0)
+    }
+    throw new CheckError('The PhishGuard API could not be reached.', 0)
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 export async function checkHealth() {
   const base = import.meta.env.VITE_API_BASE ?? ''
   try {
@@ -104,6 +135,65 @@ function normalise(body) {
     confidence,
     phishingProbability,
   }
+}
+
+function normaliseDataset(body) {
+  if (!body || typeof body !== 'object') {
+    throw new CheckError('The server returned an unexpected response.', 502)
+  }
+
+  const totalUrls = asCount(body.total_urls)
+  const legitimate = asCount(body.legitimate)
+  const phishing = asCount(body.phishing)
+  const featuresExtracted = asCount(body.features_extracted)
+  const avgCharsLegitimate = asLength(body.avg_chars_legitimate)
+  const avgCharsPhishing = asLength(body.avg_chars_phishing)
+  const features = normaliseFeatures(body.top_features)
+
+  if (
+    totalUrls == null ||
+    legitimate == null ||
+    phishing == null ||
+    featuresExtracted == null ||
+    avgCharsLegitimate == null ||
+    avgCharsPhishing == null ||
+    features.length === 0
+  ) {
+    throw new CheckError('The server returned an unexpected response.', 502)
+  }
+
+  return {
+    totalUrls,
+    legitimate,
+    phishing,
+    featuresExtracted,
+    avgCharsLegitimate,
+    avgCharsPhishing,
+    features,
+  }
+}
+
+function normaliseFeatures(value) {
+  if (!Array.isArray(value)) return []
+  return value.flatMap((item, index) => {
+    if (!item || typeof item !== 'object') return []
+    const feature = typeof item.feature === 'string' ? item.feature.trim() : ''
+    const weight = Number(item.importance)
+    if (!feature || !Number.isFinite(weight) || weight < 0) return []
+    return [{ id: `${feature}-${index}`, name: feature.replaceAll('_', ' '), weight }]
+  })
+}
+
+function asCount(value) {
+  const number = Number(value)
+  if (!Number.isInteger(number) || number < 0) return null
+  return number
+}
+
+function asLength(value) {
+  const number = Number(value)
+  if (!Number.isFinite(number) || number < 0) return null
+  return number
 }
 
 function asUnit(value) {
