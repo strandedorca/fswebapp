@@ -25,7 +25,7 @@ export const FEATURE_IMPORTANCE = [
 
 export const EXAMPLES = [
   'http://paypal-secure-login.xyz/account/verify?token=abc123',
-  'https://192.168.1.1/banking/login',
   'https://www.google.com',
-  'https://secure-apple-id-unlock.top/id/confirm',
+  'https://swinburne.instructure.com/courses/77371',
+  'https://tailwindcss.com/docs/styling-with-utility-classes',
 ]

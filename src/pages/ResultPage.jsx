@@ -35,6 +35,7 @@ export function ResultPage() {
           trustScore: result.trustScore,
           verdict: result.verdict,
           confidence: result.confidence,
+          modelFactors: result.modelFactors,
           source: 'api',
         })
         setStatus('ready')
@@ -61,6 +62,7 @@ export function ResultPage() {
       trustScore: explained.previewTrust,
       verdict: band.tone === 'mint' ? 'legitimate' : 'phishing',
       confidence: null,
+      modelFactors: [],
       source: 'preview',
     })
     setStatus('ready')
@@ -96,11 +98,11 @@ function Ready({ check, checks, onSelect }) {
           The API is not running, so this score is a local preview from the address text. It is not the trained model.
         </p>
       ) : null}
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:text-left">
         <TrustGauge score={check.trustScore} tone={band.tone} />
-        <div>
-          <p className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${badgeClass(band.tone)}`}>
-            {band.label} · {band.verdict}
+        <div className="flex w-full flex-col items-center sm:items-start">
+          <p className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${badgeClass(band.tone)} whitespace-pre`}>
+          •   {band.label}  -  {band.verdict}
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             Trust score: {check.trustScore}/100
@@ -108,9 +110,9 @@ function Ready({ check, checks, onSelect }) {
           <p className="mt-2 max-w-xl text-sm leading-6 text-mist">{band.summary}</p>
           <p className="mt-3 text-sm text-slate-100">
             {check.verdict === 'phishing' ? 'Phishing' : 'Legitimate'}
-            {confidence ? ` · model confidence ${confidence}` : ' · preview, no model confidence'}
+            {confidence ? ` - Model confidence ${confidence}` : ' - Preview, no model confidence'}
           </p>
-          <p className="mt-3 flex flex-wrap gap-3 text-xs text-mist">
+          <p className="mt-3 flex flex-wrap justify-center gap-3 text-xs text-mist sm:justify-start">
             <Legend swatch="bg-mint" label="65–100 Safe" />
             <Legend swatch="bg-warn" label="35–64 Suspicious" />
             <Legend swatch="bg-danger" label="0–34 Dangerous" />
@@ -125,10 +127,15 @@ function Ready({ check, checks, onSelect }) {
           WHY THIS SCORE?
         </h2>
         <p className="mb-3 mt-2 text-sm text-mist">
-          {explained.signals.length} signal{explained.signals.length === 1 ? '' : 's'} read from the address text.
-          {check.source === 'api' ? ' The score itself comes from the model.' : ''}
+          {check.source === 'api'
+            ? `These ${(check.modelFactors ?? []).length} explanation${(check.modelFactors ?? []).length === 1 ? '' : 's'} come from the trained model’s strongest factors for this URL, rewritten in plain language.`
+            : `The API was unavailable, so these ${explained.signals.length} explanation${explained.signals.length === 1 ? '' : 's'} are a local preview from the URL text only. They are not from the trained model.`}
         </p>
-        <SignalList signals={explained.signals} parts={explained.parts} />
+        <SignalList
+          signals={check.source === 'api' ? [] : explained.signals}
+          modelFactors={check.modelFactors ?? []}
+          parts={explained.parts}
+        />
       </section>
 
       <p className="mt-6 rounded-2xl border border-white/10 bg-ink-900 px-4 py-4 text-xs leading-5 text-mist">

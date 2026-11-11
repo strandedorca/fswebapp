@@ -26,5 +26,17 @@ function isCheck(item) {
   if (item.verdict !== 'phishing' && item.verdict !== 'legitimate') return false
   if (item.source !== 'api' && item.source !== 'preview') return false
   if (item.confidence != null && typeof item.confidence !== 'number') return false
+  if (item.modelFactors != null && !isModelFactors(item.modelFactors)) return false
   return true
+}
+
+function isModelFactors(value) {
+  if (!Array.isArray(value)) return false
+  return value.every((factor) => {
+    if (!factor || typeof factor !== 'object') return false
+    if (typeof factor.id !== 'string' || typeof factor.feature !== 'string') return false
+    if (typeof factor.value !== 'number' || typeof factor.effect !== 'number') return false
+    if (factor.direction !== 'phishing' && factor.direction !== 'legitimate') return false
+    return true
+  })
 }

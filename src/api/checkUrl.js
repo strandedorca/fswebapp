@@ -7,8 +7,8 @@ export class CheckError extends Error {
 }
 
 /**
- * checkUrl: sends the address to the FastAPI predict endpoint.
- * The response is read as data and later shown as text, never as HTML.
+ * checkUrl: sends the address to the FastAPI's predict endpoint
+ * The response is read as data and later shown as text not as HTML
  */
 export async function checkUrl(url) {
   const base = import.meta.env.VITE_API_BASE ?? ''
@@ -30,6 +30,8 @@ export async function checkUrl(url) {
     if (!response.ok) {
       throw new CheckError(messageFrom(body, response.status), response.status)
     }
+    // Add a timeout to see the loading state
+    await new Promise((r) => setTimeout(r, 500))
     return normalise(body)
   } catch (error) {
     if (error instanceof CheckError) throw error
@@ -134,7 +136,40 @@ function normalise(body) {
     verdict,
     confidence,
     phishingProbability,
+    modelFactors: normaliseModelFactors(body.top_factors),
   }
+}
+
+function normaliseModelFactors(value) {
+  if (!Array.isArray(value)) return []
+
+  return value.flatMap((item, index) => {
+    if (!item || typeof item !== 'object') return []
+
+    const feature = typeof item.feature === 'string' ? item.feature.trim() : ''
+    const numericValue = Number(item.value)
+    const effect = Number(item.effect)
+    const direction = item.direction
+
+    if (
+      !feature ||
+      !Number.isFinite(numericValue) ||
+      !Number.isFinite(effect) ||
+      (direction !== 'phishing' && direction !== 'legitimate')
+    ) {
+      return []
+    }
+
+    return [
+      {
+        id: `${feature}-${index}`,
+        feature,
+        value: numericValue,
+        effect,
+        direction,
+      },
+    ]
+  })
 }
 
 function normaliseDataset(body) {

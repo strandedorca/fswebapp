@@ -63,9 +63,12 @@ export function DatasetPage() {
   )
 }
 
+const PIE_SIZE = 224
+
 function Overview({ info }) {
   const [topOnly, setTopOnly] = useState(false)
   const [lengthsReady, setLengthsReady] = useState(false)
+  const [pieReady, setPieReady] = useState(false)
   const features = topOnly ? info.features.slice(0, 5) : info.features
   const axisMax = Math.max(1, ...info.features.map((item) => item.weight))
   const balance = [
@@ -80,8 +83,21 @@ function Overview({ info }) {
   const note = lengthNote(info.avgCharsLegitimate, info.avgCharsPhishing)
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => setLengthsReady(true))
-    return () => cancelAnimationFrame(id)
+    let cancelled = false
+    let innerId = 0
+    // Wait until layout is painted so Recharts does not finish the intro at 0×0.
+    const outerId = requestAnimationFrame(() => {
+      innerId = requestAnimationFrame(() => {
+        if (cancelled) return
+        setLengthsReady(true)
+        setPieReady(true)
+      })
+    })
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(outerId)
+      cancelAnimationFrame(innerId)
+    }
   }, [])
 
   return (
@@ -99,18 +115,25 @@ function Overview({ info }) {
             CLASS BALANCE
           </h2>
           <p className="text-sm text-slate-200">Counts in the training split</p>
-          <div className="mt-2 flex flex-col items-center gap-6 sm:flex-row sm:items-center">
-            <div className="h-64 w-full min-w-0 flex-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+          <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center">
+            {/* Fixed px size (no ResponsiveContainer): resize remounts kill the pie intro animation. */}
+            <div className="relative h-56 w-56 shrink-0" style={{ width: PIE_SIZE, height: PIE_SIZE }}>
+              {pieReady ? (
+                <PieChart width={PIE_SIZE} height={PIE_SIZE}>
                   <Pie
                     data={balance}
                     dataKey="value"
                     nameKey="name"
-                    innerRadius={58}
-                    outerRadius={84}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={68}
+                    outerRadius={98}
                     paddingAngle={0}
                     stroke="none"
+                    isAnimationActive
+                    animationBegin={80}
+                    animationDuration={900}
+                    animationEasing="ease-out"
                   >
                     {balance.map((item) => (
                       <Cell key={item.name} fill={item.fill} stroke="none" />
@@ -118,7 +141,7 @@ function Overview({ info }) {
                   </Pie>
                   <Tooltip content={<ChartTip />} />
                 </PieChart>
-              </ResponsiveContainer>
+              ) : null}
             </div>
             <ul className="w-full shrink-0 sm:w-auto sm:pr-2">
               {balance.map((item) => (

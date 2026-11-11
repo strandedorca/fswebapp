@@ -14,7 +14,7 @@ const STEPS = [
   {
     n: '03',
     title: 'Classify and score',
-    body: 'An ML model estimates phishing likelihood. That result is mapped to a 0–100 trust score and a color-coded Low / Medium / High trust band..',
+    body: 'An ML model estimates phishing likelihood. That result is mapped to a 0–100 trust score and a color-coded Low / Medium / High trust band.',
   },
   {
     n: '04',
@@ -24,9 +24,27 @@ const STEPS = [
 ]
 
 const TEAM = [
-  { initials: 'AC', name: 'Averyth Cheng', role: 'Project Manager', accent: 'mint' },
-  { initials: 'KC', name: 'KanhchanacLeak Cheng', role: 'ML Engineer', accent: 'lilac' },
-  { initials: 'ND', name: 'Noah Dang', role: 'Full-stack Developer', accent: 'warn' },
+  {
+    initials: 'AC',
+    name: 'Ayeryth Cheng',
+    role: 'ML Engineer',
+    accent: 'mint',
+    bio: 'Bachelor of Computer Science student majoring in Cybersecurity, with interests in malware analysis, networking, and programming in C++ and Java. On this project, focuses on model training to improve how PhishGuard identifies potential phishing attacks.',
+  },
+  {
+    initials: 'KC',
+    name: 'Kanhchanacleak Cheng',
+    role: 'Project Manager',
+    accent: 'lilac',
+    bio: 'Brings a background in data science and an interest in business to turn requirements into clear technical work. Manages the project with tools such as Gantt charts so tasks stay organised and the product solves the problem it is meant to solve.',
+  },
+  {
+    initials: 'ND',
+    name: 'Noah Dang',
+    role: 'Full-stack Developer',
+    accent: 'warn',
+    bio: 'Background in agile software engineering and full-stack programming, with some experience in machine learning. Builds the front end and back end so the interface, API, and model work together as a reliable phishing-detection tool.',
+  },
 ]
 
 const ACCENT = {
@@ -47,15 +65,16 @@ export function AboutPage() {
         A security tool that respects your privacy.
       </h1>
       <p className="mt-4 text-sm leading-7 text-mist sm:text-base">
-        PhishGuard is an open-source, browser-based phishing URL detector. Every analysis runs entirely in your browser.
-        We do not see your URLs, your IP address, or collect any personal data.
+        PhishGuard is a React front end with a FastAPI model API. You paste a URL in the browser; only that string is
+        sent to the PhishGuard server you run. The target page is never fetched, and the app does not use third-party
+        tracking.
       </p>
 
       <h2 className="mb-6 mt-10 text-xs font-medium tracking-[0.16em] text-mist">HOW PHISHGUARD WORKS</h2>
       <ol className="space-y-3">
         {STEPS.map((step) => (
           <li key={step.n} className="grid grid-cols-[auto_1fr] gap-x-4 rounded-2xl border border-white/10 bg-ink-900 px-4 py-5">
-            <span className="font-mono text-mint font-bold text-xl">{step.n}</span>
+            <span className="font-mono text-xl font-bold text-mint">{step.n}</span>
             <div>
               <h3 className="font-semibold">{step.title}</h3>
               <p className="mt-1 text-sm leading-6 text-mist">{step.body}</p>
@@ -69,14 +88,15 @@ export function AboutPage() {
         {TEAM.map((person) => {
           const accent = ACCENT[person.accent]
           return (
-            <li key={person.initials} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-4">
+            <li key={person.initials} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-5 text-left">
               <span
-                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${accent.avatar}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold ${accent.avatar}`}
               >
                 {person.initials}
               </span>
               <h3 className="mt-3 font-semibold">{person.name}</h3>
-              <p className={`text-sm ${accent.role} font-medium`}>{person.role}</p>
+              <p className={`text-sm font-medium ${accent.role}`}>{person.role}</p>
+              <p className="mt-2 text-sm leading-6 text-mist">{person.bio}</p>
             </li>
           )
         })}

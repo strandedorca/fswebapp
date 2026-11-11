@@ -3,7 +3,7 @@ import { UrlForm } from '../components/UrlForm.jsx'
 
 const POINTS = [
   {
-    title: 'Sent to loca API',
+    title: 'Page never fetched',
     body: 'The address is posted only to the PhishGuard API server. It is not opened as a link.',
     icon: 'lock',
   },
@@ -31,8 +31,16 @@ export function HomePage() {
 
   return (
     <div className="pb-8 pt-6 sm:pt-10">
-      <p className="mx-auto mb-6 w-fit rounded-full border border-mint/30 bg-mint/10 px-5 py-1.5 text-center text-[11px] font-medium tracking-wide text-mint whitespace-pre">
-        LOCAL API ONLY    •    PAGE NEVER FETCHED    •    NO DATA TRACKING
+      <p className="mx-auto mb-6 flex w-fit max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border border-mint/30 bg-mint/10 px-4 py-1.5 text-center text-[11px] font-medium tracking-wide text-mint sm:px-5">
+        <span>LOCAL API ONLY</span>
+        <span aria-hidden="true" className="text-mint/50">
+          •
+        </span>
+        <span>PAGE NEVER FETCHED</span>
+        <span aria-hidden="true" className="text-mint/50">
+          •
+        </span>
+        <span>NO DATA TRACKING</span>
       </p>
       <h1 className="text-center text-4xl font-semibold tracking-tight sm:text-5xl">Is this URL safe?</h1>
       <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-6 text-mist sm:text-base">
@@ -45,7 +53,7 @@ export function HomePage() {
         {POINTS.map((point) => (
           <li key={point.title} className="rounded-2xl border border-white/10 bg-ink-900 px-4 py-4">
             <div className="flex flex-col items-center justify-center">
-              <Icon name={point.icon} />  
+              <Icon name={point.icon} />
               <h2 className="mt-3 text-sm font-medium">{point.title}</h2>
               <p className="mt-1 text-xs leading-5 text-mist text-center">{point.body}</p>
             </div>

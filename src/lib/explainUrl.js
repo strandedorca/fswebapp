@@ -76,6 +76,7 @@ export function explainUrl(raw) {
       id: 'ip',
       level: 'high',
       tag: 'Host',
+      focus: 'host',
       title: 'IP address used as host',
       detail:
         'Legitimate sites almost always use a domain name, not an IP address. Phishing sites often use an IP to avoid registering a traceable domain.',
@@ -87,6 +88,7 @@ export function explainUrl(raw) {
       id: 'http',
       level: 'medium',
       tag: 'Protocol',
+      focus: 'protocol',
       title: 'Unencrypted HTTP',
       detail:
         'Legitimate services almost universally enforce HTTPS. Without TLS, traffic is sent in plaintext and can be intercepted.',
@@ -98,6 +100,7 @@ export function explainUrl(raw) {
       id: 'at',
       level: 'high',
       tag: 'Host',
+      focus: 'host',
       title: '@ symbol in the address',
       detail:
         'Text before an @ sign can disguise the real host. The browser navigates to the host that follows it.',
@@ -110,6 +113,7 @@ export function explainUrl(raw) {
       id: 'tld',
       level: 'medium',
       tag: 'Domain',
+      focus: 'tld',
       title: 'Suspicious TLD',
       detail: `The ending ${parts.tld} is often used by short-lived phishing domains.`,
     })
@@ -121,6 +125,7 @@ export function explainUrl(raw) {
       id: 'lookalike',
       level: 'medium',
       tag: 'Domain',
+      focus: 'domain',
       title: 'Look-alike characters in domain',
       detail:
         'The domain mixes letters and digits. Swaps such as “l” for “1” or “o” for “0” are used to impersonate a real name.',
@@ -134,6 +139,7 @@ export function explainUrl(raw) {
       id: 'brand',
       level: inHost ? 'high' : 'medium',
       tag: inHost ? 'Host' : 'Path',
+      focus: inHost ? 'host' : 'path',
       title: 'Brand look-alike wording',
       detail:
         'Words such as “login”, “banking”, and “verify”, or a well-known brand name, often appear on pages that try to collect credentials.',
@@ -145,6 +151,7 @@ export function explainUrl(raw) {
       id: 'length',
       level: 'low',
       tag: 'URL',
+      focus: 'url',
       title: 'Unusually long URL',
       detail:
         'Phishing addresses are often much longer, which can hide the real destination past the part a person reads first.',
@@ -156,6 +163,7 @@ export function explainUrl(raw) {
       id: 'depth',
       level: 'medium',
       tag: 'Subdomain',
+      focus: 'subdomain',
       title: 'Deep subdomain',
       detail:
         'Several subdomain labels can make a fake host look as if it belongs to a brand that only appears later in the name.',
@@ -167,6 +175,7 @@ export function explainUrl(raw) {
       id: 'hyphen',
       level: 'low',
       tag: 'Domain',
+      focus: 'domain',
       title: 'Hyphens in the domain',
       detail: 'Hyphens often glue a brand to words such as “secure” or “login”.',
     })
@@ -177,6 +186,7 @@ export function explainUrl(raw) {
       id: 'port',
       level: 'medium',
       tag: 'Host',
+      focus: 'port',
       title: 'Non-standard port',
       detail: 'Everyday websites use port 80 or 443. Another port is unusual for a public login page.',
     })
@@ -187,6 +197,7 @@ export function explainUrl(raw) {
       id: 'homograph',
       level: 'high',
       tag: 'Domain',
+      focus: 'host',
       title: 'Homograph characters',
       detail:
         'The host contains characters outside basic English letters. Some of those characters look identical to a real brand.',

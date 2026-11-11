@@ -62,8 +62,18 @@ export function Layout() {
       <main id="main" className="mx-auto w-full max-w-5xl px-4 pb-16 sm:px-6">
         <Outlet />
       </main>
-      <footer className="whitespace-pre border-t border-white/15 px-4 py-6 text-center text-xs text-mist/70">
-        PhishGuard    •    COS30049 Phishing URL Detection prototype    •    Session 15 Group 7
+      <footer className="border-t border-white/15 px-4 py-6 text-center text-xs leading-5 text-mist/70">
+        <p className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-2 gap-y-1">
+          <span>PhishGuard</span>
+          <span aria-hidden="true" className="text-mist/40">
+            •
+          </span>
+          <span>COS30049 Phishing URL Detection prototype</span>
+          <span aria-hidden="true" className="text-mist/40">
+            •
+          </span>
+          <span>Session 15 Group 7</span>
+        </p>
       </footer>
     </div>
   )
